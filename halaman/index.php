@@ -5,6 +5,7 @@ $musics=query("SELECT * FROM music JOIN artis on artis_id = artis.id JOIN katego
 
 if(isset($_POST["search"])) {
     $musics = search($_POST["keyword"]);
+    var_dump($musics);
   }
 
 ?>
@@ -41,8 +42,8 @@ if(isset($_POST["search"])) {
                 <div class="card-body">
                     <h5 class="card-title"><?= $msc["nama_music"] ?></h5>
                     <div class="text d-flex justify-content-between">
-                        <p><?= $msc["nama_artis"] ?></p>
-                        <p><?= $msc["nama_kategori"] ?></p>
+                        <p><?= $msc["nama_artis " ]; ?></p>
+                        <p><?= $msc["nama_kategori " ]; ?></p>
                     </div>
                     <div class="audio d-flex justify-content-center">
                         <audio controls >

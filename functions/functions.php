@@ -7,7 +7,7 @@ return $conn;
 }
 
 function search($keyword) {
-    $query = "SELECT * from music JOIN artis ON id_artis = artis.id
+    $query = "SELECT * from music JOIN artis ON artis_id = artis.id
                 WHERE nama_music 
                 LIKE '%$keyword%' 
                 OR nama_artis
