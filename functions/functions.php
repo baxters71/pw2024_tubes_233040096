@@ -7,10 +7,12 @@ return $conn;
 }
 
 function search($keyword) {
-    $query = "SELECT * from music JOIN artis ON artis_id = artis.id
+    $query = "SELECT * FROM music JOIN artis ON artis_id = artis.id JOIN kategori ON kategori_id = kategori.id
                 WHERE nama_music 
                 LIKE '%$keyword%' 
                 OR nama_artis
+                LIKE '%$keyword%'
+                OR nama_kategori
                 LIKE '%$keyword%'
     ";
 
@@ -26,6 +28,8 @@ function query($query) {
     }
     return $rows;
 }
+
+// funtion tambah
 
 function tambah_musik($data) {
     $conn = koneksi();
@@ -56,9 +60,73 @@ function tambah_musik($data) {
     return mysqli_affected_rows($conn);
 }
 
-function hapus($id) {
+function tambah_artis($data) {
     $conn = koneksi();
-    mysqli_query($conn, "DELETE FROM music WHERE id = $id");
+    // ambil data dari tiap elemen dalam form
+    $nama_artis = htmlspecialchars($data["nama_artis"]);
+
+    //  query insert data
+    $query = "INSERT INTO artis (nama_artis)
+                VALUES
+                ('$nama_artis')
+                ";
+    mysqli_query($conn, $query);
+
+    return mysqli_affected_rows($conn);
+}
+
+function tambah_kategori($data) {
+    $conn = koneksi();
+    // ambil data dari tiap elemen dalam form
+    $nama_kategori = htmlspecialchars($data["nama_kategori"]);
+
+    //  query insert data
+    $query = "INSERT INTO kategori (nama_kategori)
+                VALUES
+                ('$nama_kategori')
+                ";
+    mysqli_query($conn, $query);
+
+    return mysqli_affected_rows($conn);
+}
+
+function hapus($tabel, $id) {
+    $conn = koneksi();
+    mysqli_query($conn, "DELETE FROM $tabel WHERE id = $id");
+
+    return mysqli_affected_rows($conn);
+}
+
+function ubah_artis($data) {
+    $conn = koneksi();
+    // ambil data dari tiap elemen dalam form
+    
+    $id = $data["id"];
+    $nama_artis = htmlspecialchars($data["nama_artis"]); 
+
+    //  query update data
+    $query = "UPDATE artis SET
+                nama_artis = '$nama_artis'
+            WHERE id = $id 
+                ";
+    mysqli_query($conn, $query);
+
+    return mysqli_affected_rows($conn);
+}
+
+function ubah_kategori($data) {
+    $conn = koneksi();
+    // ambil data dari tiap elemen dalam form
+    
+    $id = $data["id"];
+    $nama_kategori = htmlspecialchars($data["nama_kategori"]); 
+
+    //  query update data
+    $query = "UPDATE kategori SET
+                nama_kategori = '$nama_kategori'
+            WHERE id = $id 
+                ";
+    mysqli_query($conn, $query);
 
     return mysqli_affected_rows($conn);
 }
@@ -66,6 +134,7 @@ function hapus($id) {
 function ubah_musik($data) {
     $conn = koneksi();
     // ambil data dari tiap elemen dalam form
+
     $id = $data["id"];
     $nama_musik = htmlspecialchars($data["nama_musik"]);
     $nama_artis = htmlspecialchars($data["artis_id"]);
@@ -73,18 +142,19 @@ function ubah_musik($data) {
     $audio_lama = htmlspecialchars($data["audio_lama"]);
     $gambar_lama = htmlspecialchars($data["gambar_lama"]);
 
-    // Cek apakah user pilih gambar baru atau tidak
+    // Cek apakah user pilih audio baru atau tidak
     if( $_FILES['audio']['error'] === 4) {
         $audio = $audio_lama;
     } else {
         $audio = upload("audio", "../audio/", "mp3", "wma", "wav", "Yang anda upload bukan audio!");
     }
-
+    
+    // Cek apakah user pilih gambar baru atau tidak
     if( $_FILES['gambar']['error'] === 4) {
         $gambar = $gambar_lama;
     } else {
-        $gambar = upload("gambar", "../img/", "../audio/", "jpg", "jpeg", "png", "Yang anda upload bukan gambar!");
-    } 
+        $gambar = upload("gambar", "../img/", "jpg", "jpeg", "png", "Yang anda upload bukan gambar!");
+    }
 
     //  query update data
     $query = "UPDATE music SET
@@ -98,18 +168,6 @@ function ubah_musik($data) {
     mysqli_query($conn, $query);
 
     return mysqli_affected_rows($conn);
-}
-
-function cari($keyword) {
-    $query = "SELECT * FROM mahasiswa
-                WHERE
-                nama LIKE '%$keyword%' OR
-                nama LIKE '%$keyword%' OR
-                email LIKE '%$keyword%' OR
-                jurusan LIKE '%$keyword%'
-    ";
-
-    return query($query);
 }
 
 function upload($nama, $folder, $file1, $file2, $file3, $text) {
@@ -156,40 +214,4 @@ function upload($nama, $folder, $file1, $file2, $file3, $text) {
 
     return $namaFileBaru;
 }
-
-function registrasi($data) {
-    $conn = koneksi();
-
-    $username = strtolower(stripslashes($data["username"]));
-    $password = mysqli_real_escape_string($conn, $data["password"]);
-    $password2 = mysqli_real_escape_string($conn, $data["password2"]);
-
-    // Cek konfirmasi password
-    if( $password !== $password2 ) {
-        echo "<script>
-                alert('konfirmasi password tidak sesuai')
-                </script>";
-        return false;
-    } 
-
-    // Cek username sudah terdaftar atau belum
-    $result = mysqli_query($conn, "SELECT username FROM users WHERE username = '$username'");
-    if (mysqli_fetch_assoc($result)) {
-        echo "<script>
-                alert('username sudah terdaftar!')
-                </script>";
-        return false;
-    }
-
-    // Enkripsi password
-    $password = password_hash($password, PASSWORD_DEFAULT);
-
-    // Tambahkan userbaru ke database
-    mysqli_query($conn, "INSERT INTO users(username, password) VALUES ('$username', '$password')");
-
-    return mysqli_affected_rows($conn);
-
-}
 ?>
-
-

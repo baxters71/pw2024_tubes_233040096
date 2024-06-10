@@ -1,7 +1,7 @@
 <?php 
 
 require "../functions/functions.php";
-$musics = query("select *, music.id AS id from music join artis on artis_id = artis.id JOIN kategori ON kategori_id = kategori.id");
+$artis = query("select * FROM artis ");
 
 ?>
 
@@ -21,17 +21,15 @@ $musics = query("select *, music.id AS id from music join artis on artis_id = ar
   <section>
     <?php require "../layouts/navbar.php"; ?>
     <!--for demo wrap-->
-    <h1>Musik Dashboard</h1>
+    <h1>Artis Dashboard</h1>
     <a href="dashboard.php"><button class="btn btn-success mb-2">Back</button></a>
-    <a href="tambah-musik.php"><button class="btn btn-success mb-2">Tambah</button></a>
+    <a href="tambah-artis.php"><button class="btn btn-success mb-2">Tambah</button></a>
     <div class="tbl-header">
       <table cellpadding="0" cellspacing="0" border="0">
         <thead>
           <tr>
             <th>No</th>
             <th>Nama</th>
-            <th>Artis</th>
-            <th>Kategori</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -42,16 +40,14 @@ $musics = query("select *, music.id AS id from music join artis on artis_id = ar
         <tbody>
           <?php 
         $i = 1;
-        foreach($musics as $msc) {?>
+        foreach($artis as $arts) {?>
           <tr>
             <td><?= $i++; ?></td>
-            <td><?= $msc["nama_music"]; ?></td>
-            <td><?= $msc["nama_artis"]; ?></td>
-            <td><?= $msc["nama_kategori"]; ?></td>
+            <td><?= $arts["nama_artis"]; ?></td>
             <td>
-              <a href="edit-musik.php?id=<?= $msc["id"]; ?>"><button type="button"
+              <a href="edit-artis.php?id=<?= $arts["id"]; ?>"><button type="button"
                   class="btn btn-primary">Edit</button></a>
-              <a href="hapus-musik.php?id=<?= $msc["id"]; ?>" onclick="confirm('Apakah Anda Yakin?')"><button
+              <a href="hapus-artis.php?id=<?= $arts["id"]; ?>" onclick="confirm('Apakah Anda Yakin?')"><button
                   type="button" class="btn btn-danger">Hapus</button></a>
             </td>
           </tr>
